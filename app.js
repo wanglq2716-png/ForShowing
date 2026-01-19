@@ -605,6 +605,19 @@ function setKPIs(data, threshold) {
   $("#nLow").textContent = String(counts.low);
   $("#kpiAlerts").textContent = String(data.all.alerts.length);
   $("#kpiAlertsMeta").textContent = `高 ${counts.high} · 中 ${counts.mid} · 低 ${counts.low}`;
+  const topAlert = [...data.all.alerts].sort((a, b) => b.probability - a.probability)[0];
+  const topText = topAlert
+    ? `${topAlert.region} · ${topAlert.type} · ${Math.round(topAlert.probability * 100)}%`
+    : "暂无预警";
+  const topEl = $("#alertTop");
+  if (topEl) topEl.textContent = topText;
+  const totalAlerts = Math.max(1, data.all.alerts.length);
+  const barHigh = $("#barHigh");
+  const barMid = $("#barMid");
+  const barLow = $("#barLow");
+  if (barHigh) barHigh.style.width = `${Math.round((counts.high / totalAlerts) * 100)}%`;
+  if (barMid) barMid.style.width = `${Math.round((counts.mid / totalAlerts) * 100)}%`;
+  if (barLow) barLow.style.width = `${Math.round((counts.low / totalAlerts) * 100)}%`;
   const alertTag = $("#pillAlertTag");
   alertTag.textContent = counts.high > 0 ? "高风险存在" : counts.mid > 1 ? "中风险偏多" : "平稳";
   alertTag.classList.remove("pill--danger", "pill--warn", "pill--info");

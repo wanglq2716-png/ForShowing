@@ -375,6 +375,43 @@ canvas {
 .badge--mid { color: rgba(251,191,36,0.95); border-color: rgba(251,191,36,0.25); }
 .badge--low { color: rgba(74,222,128,0.95); border-color: rgba(74,222,128,0.25); }
 
+.alert-summary {
+  margin-top: 12px;
+  display: grid;
+  gap: 10px;
+}
+.alert-summary__row {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 12.5px;
+  color: var(--muted);
+}
+.alert-summary__value {
+  color: var(--text);
+  font-weight: 650;
+}
+.alert-bars {
+  display: flex;
+  height: 10px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: rgba(4, 10, 18, 0.9);
+  overflow: hidden;
+}
+.alert-bar { height: 100%; }
+.alert-bar--high { background: linear-gradient(90deg, rgba(255,93,122,0.9), rgba(255,93,122,0.55)); }
+.alert-bar--mid { background: linear-gradient(90deg, rgba(255,209,89,0.9), rgba(255,209,89,0.5)); }
+.alert-bar--low { background: linear-gradient(90deg, rgba(60,255,183,0.9), rgba(60,255,183,0.45)); }
+.alert-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.alert-legend__item { display: inline-flex; align-items: center; gap: 6px; }
+
 .dialog {
   width: min(980px, calc(100vw - 24px));
   border-radius: 22px;

@@ -140,18 +140,20 @@
             <div class="kpi__value" id="kpiAlerts">--</div>
             <div class="kpi__meta" id="kpiAlertsMeta">--</div>
           </div>
-          <div class="bento">
-            <div class="bento__cell">
-              <div class="muted">高</div>
-              <div class="bento__num" id="nHigh">--</div>
+          <div class="alert-summary">
+            <div class="alert-summary__row">
+              <span class="muted">最高风险</span>
+              <span class="alert-summary__value" id="alertTop">--</span>
             </div>
-            <div class="bento__cell">
-              <div class="muted">中</div>
-              <div class="bento__num" id="nMid">--</div>
+            <div class="alert-bars" aria-hidden="true">
+              <div class="alert-bar alert-bar--high" id="barHigh"></div>
+              <div class="alert-bar alert-bar--mid" id="barMid"></div>
+              <div class="alert-bar alert-bar--low" id="barLow"></div>
             </div>
-            <div class="bento__cell">
-              <div class="muted">低</div>
-              <div class="bento__num" id="nLow">--</div>
+            <div class="alert-legend">
+              <span class="alert-legend__item"><span class="dot dot--high"></span>高 <span id="nHigh">--</span></span>
+              <span class="alert-legend__item"><span class="dot dot--mid"></span>中 <span id="nMid">--</span></span>
+              <span class="alert-legend__item"><span class="dot dot--low"></span>低 <span id="nLow">--</span></span>
             </div>
           </div>
         </article>

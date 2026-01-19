@@ -21,7 +21,7 @@
         <div class="brandmark" aria-hidden="true"></div>
         <div class="brandtext">
           <div class="brandtext__name">AgricultureSmart</div>
-          <div class="brandtext__tag">生姜总产预警 | 山东 · 河北 · 辽宁</div>
+          <div class="brandtext__tag">生姜总产预警 | 天气驱动 · 山东 / 河北 / 辽宁</div>
         </div>
       </div>
 
@@ -30,7 +30,7 @@
           导出周报
         </button>
         <button id="btnAbout" class="btn btn--primary" type="button" aria-haspopup="dialog">
-          本周解读
+          气象解读
         </button>
       </div>
     </header>
@@ -156,6 +156,28 @@
           </div>
         </article>
 
+        <article class="card card--wide card--climate" aria-label="气象驱动解读">
+          <div class="card__head">
+            <div>
+              <div class="card__title">气象驱动解读</div>
+              <div class="card__subtitle">突出“天气 → 产量”的影响链（示意）</div>
+            </div>
+            <div class="pill pill--info" id="climateTag">气象主导</div>
+          </div>
+          <div class="climate">
+            <div class="climate__left">
+              <div class="climate__headline" id="climateHeadline">--</div>
+              <div class="climate__sub" id="climateSub">--</div>
+              <div class="climate__list" id="climateList"></div>
+            </div>
+            <div class="climate__right">
+              <div class="climate__chart-title">上半年降雨量趋势（相对常年，示意）</div>
+              <canvas id="rainChart" width="520" height="220"></canvas>
+              <div class="climate__note" id="rainNote">--</div>
+            </div>
+          </div>
+        </article>
+
         <article class="card card--wide" aria-label="总产预测趋势">
           <div class="card__head">
             <div>
@@ -249,10 +271,10 @@
       </section>
     </main>
 
-    <dialog class="dialog" id="dlgAbout" aria-label="本周解读">
+    <dialog class="dialog" id="dlgAbout" aria-label="本周气象解读">
       <div class="dialog__head">
         <div>
-          <div class="dialog__title">本周解读（模板 + 数据证据）</div>
+          <div class="dialog__title">本周气象解读（模板 + 数据证据）</div>
           <div class="dialog__subtitle" id="dlgSub">--</div>
         </div>
         <button class="btn btn--ghost" type="button" data-close>关闭</button>
@@ -265,11 +287,11 @@
 
         <div class="grid2">
           <div class="panel">
-            <div class="panel__title">Top 3 驱动因子</div>
+            <div class="panel__title">Top 3 气象驱动</div>
             <div class="drivers" id="driverList"></div>
           </div>
           <div class="panel">
-            <div class="panel__title">建议关注点（非交易）</div>
+            <div class="panel__title">预警关注点（非交易）</div>
             <ol class="advice" id="adviceList"></ol>
           </div>
         </div>

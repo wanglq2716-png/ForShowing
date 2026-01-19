@@ -142,7 +142,7 @@ function drawFanChart(canvas, series, options) {
   }
 
   // Gridlines
-  ctx.strokeStyle = "rgba(255,255,255,0.06)";
+  ctx.strokeStyle = "rgba(38,216,255,0.10)";
   ctx.lineWidth = 1;
   for (let k = 0; k <= 4; k++) {
     const gy = pad.t + (k / 4) * (h - pad.t - pad.b);
@@ -153,7 +153,7 @@ function drawFanChart(canvas, series, options) {
   }
 
   // y-axis labels
-  ctx.fillStyle = "rgba(255,255,255,0.48)";
+  ctx.fillStyle = "rgba(185,230,255,0.55)";
   ctx.font = "12px ui-sans-serif, system-ui";
   ctx.textAlign = "right";
   for (let k = 0; k <= 4; k++) {
@@ -176,19 +176,19 @@ function drawFanChart(canvas, series, options) {
     }
     ctx.closePath();
     const grad = ctx.createLinearGradient(pad.l, 0, w - pad.r, 0);
-    grad.addColorStop(0, "rgba(96,165,250,0.20)");
-    grad.addColorStop(0.6, "rgba(167,139,250,0.16)");
-    grad.addColorStop(1, "rgba(74,222,128,0.10)");
+    grad.addColorStop(0, "rgba(38,216,255,0.25)");
+    grad.addColorStop(0.6, "rgba(26,162,255,0.18)");
+    grad.addColorStop(1, "rgba(38,216,255,0.08)");
     ctx.fillStyle = grad;
     ctx.fill();
-    ctx.strokeStyle = "rgba(255,255,255,0.10)";
+    ctx.strokeStyle = "rgba(38,216,255,0.18)";
     ctx.stroke();
   }
 
   // P50 line
   if (options.showP50) {
     ctx.lineWidth = 2.2;
-    ctx.strokeStyle = "rgba(255,255,255,0.86)";
+    ctx.strokeStyle = "rgba(38,216,255,0.95)";
     ctx.beginPath();
     for (let i = 0; i < series.length; i++) {
       const px = x(i);
@@ -200,7 +200,7 @@ function drawFanChart(canvas, series, options) {
 
     // Glow
     ctx.lineWidth = 6.5;
-    ctx.strokeStyle = "rgba(96,165,250,0.12)";
+    ctx.strokeStyle = "rgba(38,216,255,0.16)";
     ctx.beginPath();
     for (let i = 0; i < series.length; i++) {
       const px = x(i);
@@ -212,7 +212,7 @@ function drawFanChart(canvas, series, options) {
   }
 
   // X labels
-  ctx.fillStyle = "rgba(255,255,255,0.45)";
+  ctx.fillStyle = "rgba(185,230,255,0.5)";
   ctx.font = "12px ui-sans-serif, system-ui";
   ctx.textAlign = "center";
   for (let i = 0; i < series.length; i++) {
@@ -230,17 +230,103 @@ function drawFanChart(canvas, series, options) {
     ];
     for (const m of ms) {
       const px = x(Math.min(series.length - 1, m.idx));
-      ctx.strokeStyle = "rgba(251,191,36,0.25)";
+      ctx.strokeStyle = "rgba(255,209,89,0.25)";
       ctx.lineWidth = 1;
       ctx.beginPath();
       ctx.moveTo(px, pad.t);
       ctx.lineTo(px, h - pad.b);
       ctx.stroke();
-      ctx.fillStyle = "rgba(251,191,36,0.90)";
+      ctx.fillStyle = "rgba(255,209,89,0.9)";
       ctx.font = "12px ui-sans-serif, system-ui";
       ctx.textAlign = "left";
       ctx.fillText(m.label, px + 6, pad.t + 14);
     }
+  }
+}
+
+function drawRainChart(canvas, series) {
+  if (!series?.length) return;
+  const { ctx, w, h } = prepareCanvas(canvas, 220);
+  ctx.clearRect(0, 0, w, h);
+
+  const pad = { l: 40, r: 16, t: 16, b: 32 };
+  const values = series.map((s) => s.v);
+  const vMin = Math.min(...values);
+  const vMax = Math.max(...values);
+  const ymin = Math.max(0, vMin - 0.08);
+  const ymax = vMax + 0.08;
+
+  function x(i) {
+    if (series.length <= 1) return pad.l;
+    return pad.l + (i / (series.length - 1)) * (w - pad.l - pad.r);
+  }
+  function y(v) {
+    const t = (v - ymin) / (ymax - ymin);
+    return pad.t + (1 - t) * (h - pad.t - pad.b);
+  }
+
+  // gridlines
+  ctx.strokeStyle = "rgba(38,216,255,0.08)";
+  ctx.lineWidth = 1;
+  for (let k = 0; k <= 3; k++) {
+    const gy = pad.t + (k / 3) * (h - pad.t - pad.b);
+    ctx.beginPath();
+    ctx.moveTo(pad.l, gy);
+    ctx.lineTo(w - pad.r, gy);
+    ctx.stroke();
+  }
+
+  // baseline (normal = 1.0)
+  const baseY = y(1);
+  ctx.setLineDash([4, 4]);
+  ctx.strokeStyle = "rgba(255,255,255,0.2)";
+  ctx.beginPath();
+  ctx.moveTo(pad.l, baseY);
+  ctx.lineTo(w - pad.r, baseY);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle = "rgba(185,230,255,0.45)";
+  ctx.font = "12px ui-sans-serif, system-ui";
+  ctx.textAlign = "left";
+  ctx.fillText("常年", pad.l + 4, baseY - 6);
+
+  // line
+  ctx.lineWidth = 2.2;
+  ctx.strokeStyle = "rgba(38,216,255,0.95)";
+  ctx.beginPath();
+  for (let i = 0; i < series.length; i++) {
+    const px = x(i);
+    const py = y(series[i].v);
+    if (i === 0) ctx.moveTo(px, py);
+    else ctx.lineTo(px, py);
+  }
+  ctx.stroke();
+
+  // glow
+  ctx.lineWidth = 6;
+  ctx.strokeStyle = "rgba(38,216,255,0.18)";
+  ctx.beginPath();
+  for (let i = 0; i < series.length; i++) {
+    const px = x(i);
+    const py = y(series[i].v);
+    if (i === 0) ctx.moveTo(px, py);
+    else ctx.lineTo(px, py);
+  }
+  ctx.stroke();
+
+  // points + labels
+  ctx.fillStyle = "rgba(38,216,255,0.95)";
+  ctx.font = "12px ui-sans-serif, system-ui";
+  ctx.textAlign = "center";
+  for (let i = 0; i < series.length; i++) {
+    const px = x(i);
+    const py = y(series[i].v);
+    ctx.beginPath();
+    ctx.arc(px, py, 3.2, 0, 2 * Math.PI);
+    ctx.fill();
+    ctx.fillStyle = "rgba(185,230,255,0.6)";
+    ctx.fillText(series[i].m, px, h - 12);
+    ctx.fillStyle = "rgba(38,216,255,0.95)";
   }
 }
 
@@ -325,6 +411,30 @@ function renderAlerts(el, alerts, threshold) {
   }
 }
 
+function renderClimate(data) {
+  const climate = data.all?.climate;
+  if (!climate) return;
+  const tag = $("#climateTag");
+  if (tag) tag.textContent = climate.tag || "气象主导";
+  $("#climateHeadline").textContent = climate.headline || "--";
+  $("#climateSub").textContent = climate.sub || "";
+  $("#rainNote").textContent = climate.rain_note || "";
+
+  const list = $("#climateList");
+  list.innerHTML = "";
+  for (const item of climate.items || []) {
+    const node = document.createElement("div");
+    node.className = "climate__item";
+    node.innerHTML = `
+      <div class="climate__phenomenon">${item.phenomenon}</div>
+      <div class="climate__impact">${item.impact}</div>
+    `;
+    list.appendChild(node);
+  }
+
+  drawRainChart($("#rainChart"), climate.rain_trend || []);
+}
+
 function openDialog(dlg) {
   if (!dlg) return;
   if (typeof dlg.showModal === "function") dlg.showModal();
@@ -378,10 +488,13 @@ function $$(sel, root = document) {
 
 function renderAboutDialog(data, threshold) {
   $("#dlgSub").textContent = `产季 ${data.season} · 提前量 ${leadLabel(data.lead)} · 阈值 ${Math.round(threshold * 100)}%`;
-  $("#txtOneLiner").textContent =
-    data.all.risk_prob_under_10pct_below_normal >= threshold
-      ? "本周减产风险处于可预警区间，主要信号来自连阴雨/寡照与渍涝触发器的上升。"
-      : "本周总体风险低于当前阈值，但中期仍需关注局地降雨与墒情变化。";
+  const rp = data.all.risk_prob_under_10pct_below_normal;
+  const riskLine =
+    rp >= threshold
+      ? "当前减产风险已触达阈值，重点关注降雨集中与渍涝触发器。"
+      : "当前风险低于阈值，但需关注中期降雨与墒情变化。";
+  const climateLine = data.all?.climate?.headline;
+  $("#txtOneLiner").textContent = climateLine ? `${climateLine} ${riskLine}` : riskLine;
 
   const driverList = $("#driverList");
   driverList.innerHTML = "";
@@ -572,6 +685,7 @@ async function main() {
     setStatus(view);
     setKPIs(view, threshold);
     drawRiskGauge($("#riskCanvas"), view.all.risk_prob_under_10pct_below_normal);
+    renderClimate(view);
 
     const fan = $("#fanChart");
     drawFanChart(fan, view.all.trend_weeks, state);

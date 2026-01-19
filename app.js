@@ -107,14 +107,11 @@ function drawRiskGauge(canvas, p) {
   ctx.arc(mx, my, 4.6, 0, 2 * Math.PI);
   ctx.fill();
 
-  // Text
-  ctx.fillStyle = "rgba(255,255,255,0.92)";
-  ctx.font = "700 18px ui-sans-serif, system-ui";
-  ctx.textAlign = "center";
-  ctx.fillText(`${Math.round(t * 100)}%`, cx, h - 42);
-  ctx.fillStyle = "rgba(255,255,255,0.55)";
+  // Label only (avoid duplicate probability text).
+  ctx.fillStyle = "rgba(185,230,255,0.55)";
   ctx.font = "12px ui-sans-serif, system-ui";
-  ctx.fillText("减产风险概率", cx, h - 22);
+  ctx.textAlign = "center";
+  ctx.fillText("减产风险概率", cx, h - 20);
 }
 
 function drawFanChart(canvas, series, options) {

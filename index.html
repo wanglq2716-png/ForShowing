@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark" />
+    <title>AgricultureSmart | 总产预警看板（原型）</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="bg" aria-hidden="true">
+      <div class="bg__aurora"></div>
+      <div class="bg__grid"></div>
+      <div class="bg__noise"></div>
+    </div>
+
+    <a class="skip-link" href="#main">跳到主要内容</a>
+
+    <header class="topbar">
+      <div class="topbar__brand">
+        <div class="brandmark" aria-hidden="true"></div>
+        <div class="brandtext">
+          <div class="brandtext__name">AgricultureSmart</div>
+          <div class="brandtext__tag">生姜总产预警 | 山东 · 河北 · 辽宁</div>
+        </div>
+      </div>
+
+      <div class="topbar__actions">
+        <button id="btnExport" class="btn btn--ghost" type="button" aria-label="导出周报（模拟）">
+          导出周报
+        </button>
+        <button id="btnAbout" class="btn btn--primary" type="button" aria-haspopup="dialog">
+          本周解读
+        </button>
+      </div>
+    </header>
+
+    <main id="main" class="shell">
+      <section class="panel panel--filters" aria-label="筛选条件">
+        <div class="filters">
+          <div class="field">
+            <label class="field__label" for="selSeason">产季</label>
+            <select id="selSeason" class="field__control">
+              <option value="2026" selected>2026</option>
+              <option value="2025">2025</option>
+            </select>
+          </div>
+          <div class="field">
+            <label class="field__label" for="selLead">提前量</label>
+            <select id="selLead" class="field__control">
+              <option value="14d" selected>未来 2 周</option>
+              <option value="30d">未来 1 个月</option>
+              <option value="90d">未来 3 个月</option>
+              <option value="harvest">到采收</option>
+            </select>
+          </div>
+          <div class="field">
+            <label class="field__label" for="selRegion">产区</label>
+            <select id="selRegion" class="field__control">
+              <option value="ALL" selected>全部</option>
+              <option value="SD">山东</option>
+              <option value="HE">河北</option>
+              <option value="LN">辽宁</option>
+            </select>
+          </div>
+
+          <div class="field field--grow">
+            <label class="field__label" for="rngRisk">预警阈值</label>
+            <div class="range">
+              <input id="rngRisk" class="range__control" type="range" min="50" max="90" step="5" value="70" />
+              <div class="range__value"><span id="txtRisk">70</span>%</div>
+            </div>
+          </div>
+
+          <div class="filters__status" role="status" aria-live="polite">
+            <span class="dot dot--ok" aria-hidden="true"></span>
+            <span id="txtStatus">数据：Mock（离线） · 更新时间：--</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="grid">
+        <article class="card card--kpi" aria-label="总产预测">
+          <div class="card__head">
+            <div class="card__title">本产季总产预测（吨）</div>
+            <div class="pill pill--info" id="pillConfidence">置信度：--</div>
+          </div>
+          <div class="kpi">
+            <div class="kpi__value" id="kpiTotal">--</div>
+            <div class="kpi__meta">
+              <span class="muted">P10</span> <span id="kpiP10">--</span>
+              <span class="sep">·</span>
+              <span class="muted">P90</span> <span id="kpiP90">--</span>
+            </div>
+          </div>
+          <div class="spark" aria-hidden="true">
+            <div class="spark__bar" id="sparkBar"></div>
+          </div>
+          <div class="hint" id="kpiNote">--</div>
+        </article>
+
+        <article class="card card--kpi" aria-label="周环比">
+          <div class="card__head">
+            <div class="card__title">周环比（P50）</div>
+            <div class="pill pill--ghost" id="pillDeltaTag">--</div>
+          </div>
+          <div class="kpi">
+            <div class="kpi__value" id="kpiDelta">--</div>
+            <div class="kpi__meta" id="kpiDeltaMeta">--</div>
+          </div>
+          <div class="mini-meter">
+            <div class="mini-meter__track" aria-hidden="true">
+              <div class="mini-meter__fill" id="deltaFill"></div>
+            </div>
+            <div class="hint">用于提示“变化幅度”，不构成交易建议</div>
+          </div>
+        </article>
+
+        <article class="card card--kpi" aria-label="减产风险">
+          <div class="card__head">
+            <div class="card__title">减产风险概率</div>
+            <div class="pill pill--warn" id="pillRiskTag">--</div>
+          </div>
+          <div class="kpi">
+            <div class="kpi__value" id="kpiRisk">--</div>
+            <div class="kpi__meta">事件：总产低于常年 10%</div>
+          </div>
+          <div class="risk-ring">
+            <canvas id="riskCanvas" width="260" height="110" aria-hidden="true"></canvas>
+          </div>
+          <div class="hint" id="riskHint">--</div>
+        </article>
+
+        <article class="card card--kpi" aria-label="预警数量">
+          <div class="card__head">
+            <div class="card__title">未来 30 天预警</div>
+            <div class="pill pill--danger" id="pillAlertTag">--</div>
+          </div>
+          <div class="kpi">
+            <div class="kpi__value" id="kpiAlerts">--</div>
+            <div class="kpi__meta" id="kpiAlertsMeta">--</div>
+          </div>
+          <div class="bento">
+            <div class="bento__cell">
+              <div class="muted">高</div>
+              <div class="bento__num" id="nHigh">--</div>
+            </div>
+            <div class="bento__cell">
+              <div class="muted">中</div>
+              <div class="bento__num" id="nMid">--</div>
+            </div>
+            <div class="bento__cell">
+              <div class="muted">低</div>
+              <div class="bento__num" id="nLow">--</div>
+            </div>
+          </div>
+        </article>
+
+        <article class="card card--wide" aria-label="总产预测趋势">
+          <div class="card__head">
+            <div>
+              <div class="card__title">总产滚动预测（P10 / P50 / P90）</div>
+              <div class="card__subtitle">以集合天气预报驱动的情景模拟（原型：Mock 数据）</div>
+            </div>
+            <div class="toggles" role="group" aria-label="显示选项">
+              <button class="toggle is-on" type="button" data-toggle="fan">区间</button>
+              <button class="toggle is-on" type="button" data-toggle="p50">P50</button>
+              <button class="toggle" type="button" data-toggle="markers">节点</button>
+            </div>
+          </div>
+          <div class="chart">
+            <canvas id="fanChart" width="980" height="300"></canvas>
+          </div>
+          <div class="footnote">
+            免责声明：本页面仅作供需与风险参考，不构成投资建议或交易指令。
+          </div>
+        </article>
+
+        <article class="card card--wide" aria-label="风险触发器矩阵">
+          <div class="card__head">
+            <div>
+              <div class="card__title">风险触发器矩阵（未来 7 / 15 / 30 天）</div>
+              <div class="card__subtitle">红/黄/绿：严重度；数字：发生概率</div>
+            </div>
+            <div class="legend" aria-label="图例">
+              <span class="legend__item"><span class="dot dot--low" aria-hidden="true"></span>低</span>
+              <span class="legend__item"><span class="dot dot--mid" aria-hidden="true"></span>中</span>
+              <span class="legend__item"><span class="dot dot--high" aria-hidden="true"></span>高</span>
+            </div>
+          </div>
+          <div class="matrix" id="riskMatrix" role="table" aria-label="风险矩阵表格"></div>
+        </article>
+
+        <article class="card card--wide" aria-label="产区概览">
+          <div class="card__head">
+            <div>
+              <div class="card__title">产区概览（点击下钻）</div>
+              <div class="card__subtitle">按“减产风险概率”着色（原型示意，不代表真实地理边界）</div>
+            </div>
+          </div>
+
+          <div class="provinces" id="provinceCards">
+            <button class="province" type="button" data-region="SD" aria-label="山东产区详情">
+              <div class="province__name">山东</div>
+              <div class="province__meta">
+                <span class="muted">风险</span> <span class="province__risk" data-role="risk">--</span>
+                <span class="sep">·</span>
+                <span class="muted">P50 总产</span> <span class="province__total" data-role="total">--</span>
+              </div>
+              <div class="province__bar">
+                <div class="province__fill" data-role="fill"></div>
+              </div>
+            </button>
+            <button class="province" type="button" data-region="HE" aria-label="河北产区详情">
+              <div class="province__name">河北</div>
+              <div class="province__meta">
+                <span class="muted">风险</span> <span class="province__risk" data-role="risk">--</span>
+                <span class="sep">·</span>
+                <span class="muted">P50 总产</span> <span class="province__total" data-role="total">--</span>
+              </div>
+              <div class="province__bar">
+                <div class="province__fill" data-role="fill"></div>
+              </div>
+            </button>
+            <button class="province" type="button" data-region="LN" aria-label="辽宁产区详情">
+              <div class="province__name">辽宁</div>
+              <div class="province__meta">
+                <span class="muted">风险</span> <span class="province__risk" data-role="risk">--</span>
+                <span class="sep">·</span>
+                <span class="muted">P50 总产</span> <span class="province__total" data-role="total">--</span>
+              </div>
+              <div class="province__bar">
+                <div class="province__fill" data-role="fill"></div>
+              </div>
+            </button>
+          </div>
+        </article>
+
+        <article class="card card--wide" aria-label="预警列表">
+          <div class="card__head">
+            <div>
+              <div class="card__title">预警中心（按阈值过滤）</div>
+              <div class="card__subtitle">输出“关注与预案”，不输出买卖决策</div>
+            </div>
+            <div class="pill pill--ghost" id="pillThreshold">阈值：70%</div>
+          </div>
+          <div class="alerts" id="alertList"></div>
+        </article>
+      </section>
+    </main>
+
+    <dialog class="dialog" id="dlgAbout" aria-label="本周解读">
+      <div class="dialog__head">
+        <div>
+          <div class="dialog__title">本周解读（模板 + 数据证据）</div>
+          <div class="dialog__subtitle" id="dlgSub">--</div>
+        </div>
+        <button class="btn btn--ghost" type="button" data-close>关闭</button>
+      </div>
+      <div class="dialog__body">
+        <div class="callout">
+          <div class="callout__title">一句话</div>
+          <div class="callout__text" id="txtOneLiner">--</div>
+        </div>
+
+        <div class="grid2">
+          <div class="panel">
+            <div class="panel__title">Top 3 驱动因子</div>
+            <div class="drivers" id="driverList"></div>
+          </div>
+          <div class="panel">
+            <div class="panel__title">建议关注点（非交易）</div>
+            <ol class="advice" id="adviceList"></ol>
+          </div>
+        </div>
+
+        <div class="footnote">
+          说明：本原型中的“解读”由规则模板生成；上线版可替换为大模型生成，但必须引用可追溯的指标与数据来源。
+        </div>
+      </div>
+    </dialog>
+
+    <dialog class="dialog" id="dlgRegion" aria-label="产区详情">
+      <div class="dialog__head">
+        <div>
+          <div class="dialog__title" id="dlgRegionTitle">产区详情</div>
+          <div class="dialog__subtitle" id="dlgRegionSub">--</div>
+        </div>
+        <button class="btn btn--ghost" type="button" data-close>关闭</button>
+      </div>
+      <div class="dialog__body">
+        <div class="grid2">
+          <div class="panel">
+            <div class="panel__title">总产贡献拆解（示意）</div>
+            <div class="decomp">
+              <div class="decomp__row">
+                <div class="muted">面积（亩）</div>
+                <div class="decomp__value" id="deArea">--</div>
+              </div>
+              <div class="decomp__row">
+                <div class="muted">单产（kg/亩）</div>
+                <div class="decomp__value" id="deYield">--</div>
+              </div>
+              <div class="decomp__row">
+                <div class="muted">推算总产（吨）</div>
+                <div class="decomp__value" id="deTotal">--</div>
+              </div>
+            </div>
+            <div class="footnote">
+              注：即便当前版本只预测总产，也建议展示拆解以增强可解释性与可沟通性。
+            </div>
+          </div>
+          <div class="panel">
+            <div class="panel__title">本产区关键风险</div>
+            <div class="chips" id="regionChips"></div>
+            <div class="panel__title mt16">重点县 Top（示意）</div>
+            <div class="rows" id="countyRows"></div>
+          </div>
+        </div>
+      </div>
+    </dialog>
+
+    <script src="./mock-data.js" defer></script>
+    <script src="./app.js" defer></script>
+  </body>
+</html>

@@ -120,7 +120,7 @@ function drawRiskGauge(canvas, p) {
 function drawFanChart(canvas, series, options) {
   const { ctx, w, h } = prepareCanvas(canvas, 300);
 
-  const pad = { l: 56, r: 18, t: 18, b: 44 };
+  const pad = { l: 64, r: 18, t: 22, b: 52 };
   ctx.clearRect(0, 0, w, h);
 
   const xs = series.map((_, i) => i);
@@ -159,7 +159,7 @@ function drawFanChart(canvas, series, options) {
   for (let k = 0; k <= 4; k++) {
     const v = ymin + (1 - k / 4) * (ymax - ymin);
     const gy = pad.t + (k / 4) * (h - pad.t - pad.b);
-    ctx.fillText(fmtInt(v), pad.l - 10, gy + 4);
+    ctx.fillText(fmtInt(v), pad.l - 8, gy + 4);
   }
 
   // Fan band (q10-q90)
@@ -249,7 +249,7 @@ function drawRainChart(canvas, series) {
   const { ctx, w, h } = prepareCanvas(canvas, 220);
   ctx.clearRect(0, 0, w, h);
 
-  const pad = { l: 40, r: 16, t: 16, b: 32 };
+  const pad = { l: 46, r: 16, t: 18, b: 36 };
   const values = series.map((s) => s.v);
   const vMin = Math.min(...values);
   const vMax = Math.max(...values);

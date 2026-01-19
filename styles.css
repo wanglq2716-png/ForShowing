@@ -82,6 +82,7 @@ body {
   background: var(--bg1);
   border: 1px solid var(--line2);
   box-shadow: var(--shadow);
+  padding: 12px;
 }
 .panel--filters { padding: 14px 14px 10px; }
 
@@ -242,8 +243,21 @@ body {
 }
 
 .risk-ring { margin-top: 10px; }
-.chart { margin-top: 12px; }
-canvas { width: 100%; height: auto; border-radius: 18px; background: rgba(2,6,12,0.95); border: 1px solid var(--line); }
+.chart {
+  margin-top: 12px;
+  padding: 8px;
+  border-radius: 18px;
+  border: 1px solid var(--line);
+  background: rgba(2,6,12,0.95);
+}
+canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 14px;
+  background: rgba(2,6,12,0.85);
+  border: 1px solid rgba(38,216,255,0.18);
+}
 
 .toggles { display: flex; gap: 8px; }
 .toggle {
@@ -407,7 +421,12 @@ canvas { width: 100%; height: auto; border-radius: 18px; background: rgba(2,6,12
 .driver__dir { color: var(--muted); font-size: 12.5px; }
 .driver__evi { margin-top: 6px; color: var(--muted2); font-size: 12.5px; }
 
-.advice { margin: 0; padding-left: 18px; color: var(--text); }
+.advice {
+  margin: 0;
+  padding-left: 14px;
+  color: var(--text);
+  list-style-position: inside;
+}
 .advice li { margin: 8px 0; color: var(--muted); }
 
 .decomp { display: grid; gap: 10px; }

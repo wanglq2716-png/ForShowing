@@ -1,0 +1,337 @@
+{
+  "target_month": "2026-02",
+  "issue_month": "2026-01",
+  "leads": {
+    "1": [
+      {
+        "province": "河北省",
+        "province_short": "河北",
+        "mean_prob": 0.5772,
+        "max_prob": 0.978,
+        "mean_anom": -2.423,
+        "high_share": 0.5,
+        "count": 42,
+        "total_count": 167,
+        "coverage": 0.2515
+      },
+      {
+        "province": "山东省",
+        "province_short": "山东",
+        "mean_prob": 0.5491,
+        "max_prob": 0.9541,
+        "mean_anom": -2.141,
+        "high_share": 0.5,
+        "count": 32,
+        "total_count": 136,
+        "coverage": 0.2353
+      },
+      {
+        "province": "辽宁省",
+        "province_short": "辽宁",
+        "mean_prob": 0.5185,
+        "max_prob": 0.9333,
+        "mean_anom": -2.083,
+        "high_share": 0.5,
+        "count": 30,
+        "total_count": 100,
+        "coverage": 0.3
+      }
+    ],
+    "2": [
+      {
+        "province": "河北省",
+        "province_short": "河北",
+        "mean_prob": 0.5935,
+        "max_prob": 0.9985,
+        "mean_anom": -2.748,
+        "high_share": 0.5,
+        "count": 42,
+        "total_count": 167,
+        "coverage": 0.2515
+      },
+      {
+        "province": "山东省",
+        "province_short": "山东",
+        "mean_prob": 0.5665,
+        "max_prob": 0.9966,
+        "mean_anom": -2.779,
+        "high_share": 0.5,
+        "count": 32,
+        "total_count": 136,
+        "coverage": 0.2353
+      },
+      {
+        "province": "辽宁省",
+        "province_short": "辽宁",
+        "mean_prob": 0.5015,
+        "max_prob": 0.9494,
+        "mean_anom": -1.952,
+        "high_share": 0.5,
+        "count": 30,
+        "total_count": 100,
+        "coverage": 0.3
+      }
+    ],
+    "3": [
+      {
+        "province": "山东省",
+        "province_short": "山东",
+        "mean_prob": 0.6763,
+        "max_prob": 1.0,
+        "mean_anom": -4.043,
+        "high_share": 0.5,
+        "count": 32,
+        "total_count": 136,
+        "coverage": 0.2353
+      },
+      {
+        "province": "河北省",
+        "province_short": "河北",
+        "mean_prob": 0.6549,
+        "max_prob": 0.9999,
+        "mean_anom": -3.48,
+        "high_share": 0.5,
+        "count": 42,
+        "total_count": 167,
+        "coverage": 0.2515
+      },
+      {
+        "province": "辽宁省",
+        "province_short": "辽宁",
+        "mean_prob": 0.5914,
+        "max_prob": 0.9953,
+        "mean_anom": -2.738,
+        "high_share": 0.5,
+        "count": 30,
+        "total_count": 100,
+        "coverage": 0.3
+      }
+    ]
+  },
+  "warm": {
+    "leads": {
+      "1": [
+        {
+          "province": "山东省",
+          "province_short": "山东",
+          "mean_prob": 0.0253,
+          "max_prob": 0.1232,
+          "mean_anom": -2.141,
+          "high_share": 0.0,
+          "count": 32,
+          "total_count": 136,
+          "coverage": 0.2353
+        },
+        {
+          "province": "辽宁省",
+          "province_short": "辽宁",
+          "mean_prob": 0.0078,
+          "max_prob": 0.0291,
+          "mean_anom": -2.083,
+          "high_share": 0.0,
+          "count": 30,
+          "total_count": 100,
+          "coverage": 0.3
+        },
+        {
+          "province": "河北省",
+          "province_short": "河北",
+          "mean_prob": 0.006,
+          "max_prob": 0.0619,
+          "mean_anom": -2.423,
+          "high_share": 0.0,
+          "count": 42,
+          "total_count": 167,
+          "coverage": 0.2515
+        }
+      ],
+      "2": [
+        {
+          "province": "山东省",
+          "province_short": "山东",
+          "mean_prob": 0.0133,
+          "max_prob": 0.044,
+          "mean_anom": -2.779,
+          "high_share": 0.0,
+          "count": 32,
+          "total_count": 136,
+          "coverage": 0.2353
+        },
+        {
+          "province": "辽宁省",
+          "province_short": "辽宁",
+          "mean_prob": 0.0121,
+          "max_prob": 0.0458,
+          "mean_anom": -1.952,
+          "high_share": 0.0,
+          "count": 30,
+          "total_count": 100,
+          "coverage": 0.3
+        },
+        {
+          "province": "河北省",
+          "province_short": "河北",
+          "mean_prob": 0.005,
+          "max_prob": 0.0204,
+          "mean_anom": -2.748,
+          "high_share": 0.0,
+          "count": 42,
+          "total_count": 167,
+          "coverage": 0.2515
+        }
+      ],
+      "3": [
+        {
+          "province": "辽宁省",
+          "province_short": "辽宁",
+          "mean_prob": 0.0087,
+          "max_prob": 0.0441,
+          "mean_anom": -2.738,
+          "high_share": 0.0,
+          "count": 30,
+          "total_count": 100,
+          "coverage": 0.3
+        },
+        {
+          "province": "山东省",
+          "province_short": "山东",
+          "mean_prob": 0.0038,
+          "max_prob": 0.0361,
+          "mean_anom": -4.043,
+          "high_share": 0.0,
+          "count": 32,
+          "total_count": 136,
+          "coverage": 0.2353
+        },
+        {
+          "province": "河北省",
+          "province_short": "河北",
+          "mean_prob": 0.0033,
+          "max_prob": 0.0181,
+          "mean_anom": -3.48,
+          "high_share": 0.0,
+          "count": 42,
+          "total_count": 167,
+          "coverage": 0.2515
+        }
+      ]
+    }
+  },
+  "cold": {
+    "leads": {
+      "1": [
+        {
+          "province": "河北省",
+          "province_short": "河北",
+          "mean_prob": 0.5711,
+          "max_prob": 0.978,
+          "mean_anom": -2.423,
+          "high_share": 0.5,
+          "count": 42,
+          "total_count": 167,
+          "coverage": 0.2515
+        },
+        {
+          "province": "山东省",
+          "province_short": "山东",
+          "mean_prob": 0.5238,
+          "max_prob": 0.9541,
+          "mean_anom": -2.141,
+          "high_share": 0.5,
+          "count": 32,
+          "total_count": 136,
+          "coverage": 0.2353
+        },
+        {
+          "province": "辽宁省",
+          "province_short": "辽宁",
+          "mean_prob": 0.5107,
+          "max_prob": 0.9333,
+          "mean_anom": -2.083,
+          "high_share": 0.5,
+          "count": 30,
+          "total_count": 100,
+          "coverage": 0.3
+        }
+      ],
+      "2": [
+        {
+          "province": "河北省",
+          "province_short": "河北",
+          "mean_prob": 0.5885,
+          "max_prob": 0.9985,
+          "mean_anom": -2.748,
+          "high_share": 0.5,
+          "count": 42,
+          "total_count": 167,
+          "coverage": 0.2515
+        },
+        {
+          "province": "山东省",
+          "province_short": "山东",
+          "mean_prob": 0.5532,
+          "max_prob": 0.9966,
+          "mean_anom": -2.779,
+          "high_share": 0.5,
+          "count": 32,
+          "total_count": 136,
+          "coverage": 0.2353
+        },
+        {
+          "province": "辽宁省",
+          "province_short": "辽宁",
+          "mean_prob": 0.4894,
+          "max_prob": 0.9494,
+          "mean_anom": -1.952,
+          "high_share": 0.5,
+          "count": 30,
+          "total_count": 100,
+          "coverage": 0.3
+        }
+      ],
+      "3": [
+        {
+          "province": "山东省",
+          "province_short": "山东",
+          "mean_prob": 0.6725,
+          "max_prob": 1.0,
+          "mean_anom": -4.043,
+          "high_share": 0.5,
+          "count": 32,
+          "total_count": 136,
+          "coverage": 0.2353
+        },
+        {
+          "province": "河北省",
+          "province_short": "河北",
+          "mean_prob": 0.6517,
+          "max_prob": 0.9999,
+          "mean_anom": -3.48,
+          "high_share": 0.5,
+          "count": 42,
+          "total_count": 167,
+          "coverage": 0.2515
+        },
+        {
+          "province": "辽宁省",
+          "province_short": "辽宁",
+          "mean_prob": 0.5827,
+          "max_prob": 0.9953,
+          "mean_anom": -2.738,
+          "high_share": 0.5,
+          "count": 30,
+          "total_count": 100,
+          "coverage": 0.3
+        }
+      ]
+    }
+  },
+  "baseline_years": 3,
+  "threshold_c": 2.0,
+  "sigma_by_lead": {
+    "1": 1.3314,
+    "2": 1.256,
+    "3": 1.2929
+  },
+  "overall_sigma": 1.2932
+}

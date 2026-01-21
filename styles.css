@@ -244,6 +244,38 @@ body {
 }
 
 .risk-ring { margin-top: 10px; }
+.risk-battery {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  padding: 12px 14px 14px;
+  border-radius: 16px;
+  border: 1px solid rgba(38,216,255,0.18);
+  background: rgba(2,6,12,0.9);
+  min-height: 96px;
+}
+.risk-battery__bar {
+  flex: 1;
+  min-width: 6px;
+  border-radius: 6px;
+  background: rgba(148,163,184,0.18);
+  transition: transform 180ms ease, background 180ms ease, box-shadow 180ms ease;
+}
+.risk-battery__bar.is-on--low {
+  background: rgba(74,222,128,0.85);
+  box-shadow: 0 0 12px rgba(74,222,128,0.25);
+}
+.risk-battery__bar.is-on--mid {
+  background: rgba(251,191,36,0.85);
+  box-shadow: 0 0 12px rgba(251,191,36,0.25);
+}
+.risk-battery__bar.is-on--high {
+  background: rgba(251,113,133,0.85);
+  box-shadow: 0 0 12px rgba(251,113,133,0.25);
+}
+.risk-battery__bar.is-on {
+  transform: translateY(-2px);
+}
 .chart {
   margin-top: 12px;
   padding: 8px;

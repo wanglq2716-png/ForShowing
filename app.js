@@ -162,50 +162,27 @@ function renderForecastTable(el, rows, months, options) {
   }
 }
 
-function drawRiskGauge(canvas, p) {
-  const { ctx, w, h } = prepareCanvas(canvas, 110);
-  ctx.clearRect(0, 0, w, h);
+function drawRiskGauge(el, p) {
+  if (!el) return;
+  if (el.tagName === "CANVAS") return; // legacy canvas removed
 
-  const pad = 16;
-  const cx = w / 2;
-  const cy = h - 6;
-  const r = Math.min(w * 0.46, h * 1.2);
-  const a0 = Math.PI; // left
-  const a1 = 2 * Math.PI; // right
+  const total = 10;
+  const value = clamp01(p);
+  const filled = Math.round(value * total);
+  el.innerHTML = "";
 
-  // Track
-  ctx.lineWidth = 14;
-  ctx.lineCap = "round";
-  ctx.strokeStyle = "rgba(255,255,255,0.10)";
-  ctx.beginPath();
-  ctx.arc(cx, cy, r - pad, a0 + 0.06, a1 - 0.06);
-  ctx.stroke();
-
-  // Value arc
-  const t = clamp01(p);
-  const grad = ctx.createLinearGradient(cx - r, 0, cx + r, 0);
-  grad.addColorStop(0.0, "rgba(74,222,128,0.85)");
-  grad.addColorStop(0.55, "rgba(251,191,36,0.85)");
-  grad.addColorStop(1.0, "rgba(251,113,133,0.85)");
-  ctx.strokeStyle = grad;
-  ctx.beginPath();
-  ctx.arc(cx, cy, r - pad, a0 + 0.06, a0 + 0.06 + (a1 - a0 - 0.12) * t);
-  ctx.stroke();
-
-  // Marker
-  const ang = a0 + 0.06 + (a1 - a0 - 0.12) * t;
-  const mx = cx + (r - pad) * Math.cos(ang);
-  const my = cy + (r - pad) * Math.sin(ang);
-  ctx.fillStyle = "rgba(255,255,255,0.88)";
-  ctx.beginPath();
-  ctx.arc(mx, my, 4.6, 0, 2 * Math.PI);
-  ctx.fill();
-
-  // Label only (avoid duplicate probability text).
-  ctx.fillStyle = "rgba(185,230,255,0.55)";
-  ctx.font = "12px ui-sans-serif, system-ui";
-  ctx.textAlign = "center";
-  ctx.fillText("减产风险概率", cx, h - 20);
+  for (let i = 0; i < total; i += 1) {
+    const bar = document.createElement("div");
+    bar.className = "risk-battery__bar";
+    const height = 28 + i * 6;
+    bar.style.height = `${height}px`;
+    if (i < filled) {
+      const ratio = (i + 1) / total;
+      const sev = ratio <= 0.33 ? "low" : ratio <= 0.66 ? "mid" : "high";
+      bar.classList.add("is-on", `is-on--${sev}`);
+    }
+    el.appendChild(bar);
+  }
 }
 
 function drawFanChart(canvas, series, options) {
@@ -457,9 +434,10 @@ function renderClimate(data) {
   const climate = data.all?.climate;
   if (!climate) return;
   const tag = $("#climateTag");
-  if (tag) tag.textContent = climate.tag || "气象主导";
+  if (tag) tag.textContent = climate.tag || "趋势简报";
   $("#climateHeadline").textContent = climate.headline || "--";
-  $("#climateSub").textContent = climate.sub || "";
+  const labelText = climate.labels ? ` · ${climate.labels}` : "";
+  $("#climateSub").textContent = `${climate.sub || ""}${labelText}`.trim();
   $("#rainNote").textContent = climate.rain_note || "";
 
   const list = $("#climateList");
@@ -604,9 +582,11 @@ function leadLabel(lead) {
 }
 
 const WEATHER_FILES = {
-  tempAnomaly: "./data/temp_anomaly_province_2024-07.json",
-  extremeRain: "./data/extreme_risk_province_2024-07.json"
+  forecast: "./data/weather_forecast_latest.json",
+  tempAnomaly: "./data/temp_anomaly_province_latest.json",
+  extremeRain: "./data/extreme_risk_province_latest.json"
 };
+const CLIMATE_FILE = "./data/climate_insight_latest.json";
 const weatherCache = new Map();
 
 function addMonths(ym, delta) {
@@ -629,9 +609,29 @@ async function loadWeatherFile(key) {
   return data;
 }
 
+async function loadClimateInsight() {
+  if (!CLIMATE_FILE) return null;
+  const res = await fetch(CLIMATE_FILE);
+  if (!res.ok) throw new Error(`气象解读加载失败：${res.status}`);
+  return res.json();
+}
+
 async function hydrateWeatherFromFiles(weather) {
   if (!weather) return;
   let touched = false;
+  try {
+    const forecast = await loadWeatherFile("forecast");
+    if (forecast) {
+      if (forecast.issue_month) weather.issue_month = forecast.issue_month;
+      if (forecast.months) weather.months = forecast.months;
+      if (forecast.temperature) weather.temperature = forecast.temperature;
+      if (forecast.precipitation) weather.precipitation = forecast.precipitation;
+      touched = true;
+    }
+  } catch (err) {
+    console.warn(err);
+  }
+
   try {
     const temp = await loadWeatherFile("tempAnomaly");
     if (temp) {
@@ -676,7 +676,7 @@ async function hydrateWeatherFromFiles(weather) {
   }
 
   if (touched) {
-    weather.source = weather.source ? "Mock + 模型" : "模型输出";
+    weather.source = "模型输出";
   }
 }
 
@@ -842,6 +842,15 @@ async function main() {
   const weather = safeClone(raw.weather || {});
   await hydrateWeatherFromFiles(weather);
   raw.weather = weather;
+  try {
+    const climate = await loadClimateInsight();
+    if (climate) {
+      raw.all = raw.all || {};
+      raw.all.climate = climate;
+    }
+  } catch (err) {
+    console.warn(err);
+  }
 
   const state = {
     showFan: true,
@@ -873,7 +882,7 @@ async function main() {
 
     setStatus(view);
     setKPIs(view, threshold);
-    drawRiskGauge($("#riskCanvas"), view.all.risk_prob_under_10pct_below_normal);
+    drawRiskGauge($("#riskBattery"), view.all.risk_prob_under_10pct_below_normal);
     renderClimate(view);
 
     const fan = $("#fanChart");

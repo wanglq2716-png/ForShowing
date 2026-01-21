@@ -1,0 +1,93 @@
+{
+  "target_month": "2026-02",
+  "issue_month": "2026-01",
+  "leads": {
+    "1": [
+      {
+        "province": "河北省",
+        "province_short": "河北",
+        "mean_prob": 0.375,
+        "max_prob": 0.7066,
+        "count": 21,
+        "total_count": 167,
+        "coverage": 0.1257
+      },
+      {
+        "province": "辽宁省",
+        "province_short": "辽宁",
+        "mean_prob": 0.306,
+        "max_prob": 0.6457,
+        "count": 15,
+        "total_count": 100,
+        "coverage": 0.15
+      },
+      {
+        "province": "山东省",
+        "province_short": "山东",
+        "mean_prob": 0.1642,
+        "max_prob": 0.5416,
+        "count": 16,
+        "total_count": 136,
+        "coverage": 0.1176
+      }
+    ],
+    "2": [
+      {
+        "province": "河北省",
+        "province_short": "河北",
+        "mean_prob": 0.2716,
+        "max_prob": 0.4883,
+        "count": 21,
+        "total_count": 167,
+        "coverage": 0.1257
+      },
+      {
+        "province": "辽宁省",
+        "province_short": "辽宁",
+        "mean_prob": 0.1931,
+        "max_prob": 0.3845,
+        "count": 15,
+        "total_count": 100,
+        "coverage": 0.15
+      },
+      {
+        "province": "山东省",
+        "province_short": "山东",
+        "mean_prob": 0.1208,
+        "max_prob": 0.4643,
+        "count": 16,
+        "total_count": 136,
+        "coverage": 0.1176
+      }
+    ],
+    "3": [
+      {
+        "province": "山东省",
+        "province_short": "山东",
+        "mean_prob": 0.5624,
+        "max_prob": 0.8641,
+        "count": 16,
+        "total_count": 136,
+        "coverage": 0.1176
+      },
+      {
+        "province": "河北省",
+        "province_short": "河北",
+        "mean_prob": 0.5265,
+        "max_prob": 0.7961,
+        "count": 21,
+        "total_count": 167,
+        "coverage": 0.1257
+      },
+      {
+        "province": "辽宁省",
+        "province_short": "辽宁",
+        "mean_prob": 0.4807,
+        "max_prob": 0.8079,
+        "count": 15,
+        "total_count": 100,
+        "coverage": 0.15
+      }
+    ]
+  }
+}

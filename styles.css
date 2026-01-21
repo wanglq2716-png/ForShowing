@@ -312,36 +312,19 @@ canvas {
 
 .field--compact .field__control { min-width: 140px; }
 
-.risk-map {
-  margin-top: 12px;
-  display: grid;
-  grid-template-columns: minmax(0, 1.4fr) minmax(0, 0.8fr);
-  gap: 16px;
-  align-items: stretch;
-}
 .risk-map__controls {
   display: flex;
   align-items: center;
   gap: 12px;
   flex-wrap: wrap;
 }
-.risk-map__canvas { position: relative; }
-.risk-map__legend {
-  position: absolute;
-  right: 12px;
-  bottom: 12px;
-  display: inline-flex;
+
+.risk-province {
+  margin-top: 12px;
+  display: grid;
   gap: 12px;
-  align-items: center;
-  padding: 6px 10px;
-  border-radius: 999px;
-  border: 1px solid var(--line);
-  background: rgba(3, 8, 14, 0.82);
-  font-size: 12px;
-  color: var(--muted);
 }
-.risk-map__side { display: grid; gap: 12px; }
-.risk-map__note {
+.risk-province__note {
   padding: 10px 12px;
   border-radius: 14px;
   border: 1px solid var(--line);
@@ -349,8 +332,12 @@ canvas {
   color: var(--muted);
   font-size: 12.5px;
 }
-.risk-map__list { display: grid; gap: 10px; }
-.risk-map__item {
+.risk-province__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+.risk-province__item {
   padding: 10px 12px;
   border-radius: 14px;
   border: 1px solid var(--line);
@@ -358,22 +345,25 @@ canvas {
   display: grid;
   gap: 6px;
 }
-.risk-map__item-top {
+.risk-province__item--high { border-color: rgba(251,113,133,0.4); }
+.risk-province__item--mid { border-color: rgba(251,191,36,0.4); }
+.risk-province__item--low { border-color: rgba(74,222,128,0.35); }
+.risk-province__item-top {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 8px;
 }
-.risk-map__item-name { font-weight: 650; }
-.risk-map__item-meta { color: var(--muted); font-size: 12px; }
-.risk-map__bar {
+.risk-province__item-name { font-weight: 650; }
+.risk-province__item-meta { color: var(--muted); font-size: 12px; }
+.risk-province__bar {
   height: 6px;
   border-radius: 999px;
   background: rgba(4, 10, 18, 0.9);
   border: 1px solid var(--line);
   overflow: hidden;
 }
-.risk-map__bar-fill {
+.risk-province__bar-fill {
   height: 100%;
   border-radius: 999px;
   background: linear-gradient(90deg, rgba(38,216,255,0.9), rgba(255,93,122,0.8));
@@ -631,7 +621,7 @@ canvas {
   .filters { grid-template-columns: 1fr 1fr; }
   .card--kpi { grid-column: span 6; }
   .matrix__row { grid-template-columns: 1fr; }
-  .risk-map { grid-template-columns: 1fr; }
+  .risk-province__grid { grid-template-columns: 1fr; }
   .provinces { grid-template-columns: 1fr; }
   .alert { grid-template-columns: 1fr; }
   .grid2 { grid-template-columns: 1fr; }

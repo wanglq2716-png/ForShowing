@@ -1,0 +1,101 @@
+{
+  "target_month": "2024-07",
+  "leads": {
+    "1": [
+      {
+        "province": "河北省",
+        "province_short": "河北",
+        "mean_prob": 0.0884,
+        "max_prob": 0.4725,
+        "high_share": 0.0476,
+        "count": 21,
+        "total_count": 167,
+        "coverage": 0.1257
+      },
+      {
+        "province": "辽宁省",
+        "province_short": "辽宁",
+        "mean_prob": 0.0439,
+        "max_prob": 0.2909,
+        "high_share": 0.0,
+        "count": 15,
+        "total_count": 100,
+        "coverage": 0.15
+      },
+      {
+        "province": "山东省",
+        "province_short": "山东",
+        "mean_prob": 0.0373,
+        "max_prob": 0.1044,
+        "high_share": 0.0,
+        "count": 16,
+        "total_count": 136,
+        "coverage": 0.1176
+      }
+    ],
+    "2": [
+      {
+        "province": "河北省",
+        "province_short": "河北",
+        "mean_prob": 0.153,
+        "max_prob": 0.2725,
+        "high_share": 0.0,
+        "count": 21,
+        "total_count": 167,
+        "coverage": 0.1257
+      },
+      {
+        "province": "山东省",
+        "province_short": "山东",
+        "mean_prob": 0.119,
+        "max_prob": 0.2456,
+        "high_share": 0.0,
+        "count": 16,
+        "total_count": 136,
+        "coverage": 0.1176
+      },
+      {
+        "province": "辽宁省",
+        "province_short": "辽宁",
+        "mean_prob": 0.1095,
+        "max_prob": 0.3861,
+        "high_share": 0.0,
+        "count": 15,
+        "total_count": 100,
+        "coverage": 0.15
+      }
+    ],
+    "3": [
+      {
+        "province": "河北省",
+        "province_short": "河北",
+        "mean_prob": 0.1195,
+        "max_prob": 0.4453,
+        "high_share": 0.0476,
+        "count": 21,
+        "total_count": 167,
+        "coverage": 0.1257
+      },
+      {
+        "province": "辽宁省",
+        "province_short": "辽宁",
+        "mean_prob": 0.0585,
+        "max_prob": 0.1543,
+        "high_share": 0.0,
+        "count": 15,
+        "total_count": 100,
+        "coverage": 0.15
+      },
+      {
+        "province": "山东省",
+        "province_short": "山东",
+        "mean_prob": 0.054,
+        "max_prob": 0.1705,
+        "high_share": 0.0,
+        "count": 16,
+        "total_count": 136,
+        "coverage": 0.1176
+      }
+    ]
+  }
+}

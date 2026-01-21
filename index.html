@@ -200,48 +200,46 @@
           </div>
         </article>
 
-        <article class="card card--wide" aria-label="风险触发器矩阵">
+        <article class="card card--wide" aria-label="气象预测概览">
           <div class="card__head">
             <div>
-              <div class="card__title">风险触发器矩阵（未来 7 / 15 / 30 天）</div>
-              <div class="card__subtitle">红/黄/绿：严重度；数字：发生概率</div>
+              <div class="card__title">气象预测概览（未来三个月）</div>
+              <div class="card__subtitle" id="weatherSubtitle">预测时刻 -- · 目标月 -- / -- / --</div>
             </div>
-            <div class="legend" aria-label="图例">
-              <span class="legend__item"><span class="dot dot--low" aria-hidden="true"></span>低</span>
-              <span class="legend__item"><span class="dot dot--mid" aria-hidden="true"></span>中</span>
-              <span class="legend__item"><span class="dot dot--high" aria-hidden="true"></span>高</span>
+            <div class="pill pill--ghost" id="weatherStatus">加载中</div>
+          </div>
+          <div class="forecast-panels">
+            <div class="panel panel--soft">
+              <div class="panel__title">温度预测（℃）</div>
+              <div class="forecast-table" id="tempForecastTable"></div>
+            </div>
+            <div class="panel panel--soft">
+              <div class="panel__title">降水预测（mm/月）</div>
+              <div class="forecast-table" id="rainForecastTable"></div>
             </div>
           </div>
-          <div class="matrix" id="riskMatrix" role="table" aria-label="风险矩阵表格"></div>
         </article>
 
-        <article class="card card--wide" aria-label="极端降水风险（省级）">
+        <article class="card card--wide" aria-label="异常风险窗口">
           <div class="card__head">
             <div>
-              <div class="card__title">极端降水风险（省级）</div>
-              <div class="card__subtitle">P95 极端降水概率 · 省级汇总 · ENSO/PDO/IOD 修正</div>
-            </div>
-            <div class="risk-map__controls">
-              <div class="field field--compact">
-                <label class="field__label" for="selExtremeMonth">目标月</label>
-                <select id="selExtremeMonth" class="field__control">
-                  <option value="2024-07" selected>2024-07</option>
-                </select>
-              </div>
-              <div class="field field--compact">
-                <label class="field__label" for="selExtremeLead">提前量</label>
-                <select id="selExtremeLead" class="field__control">
-                  <option value="1">提前 1 月</option>
-                  <option value="2" selected>提前 2 月</option>
-                  <option value="3">提前 3 月</option>
-                </select>
-              </div>
-              <div class="pill pill--ghost" id="riskMapStatus">加载中</div>
+              <div class="card__title">异常风险窗口（未来三个月）</div>
+              <div class="card__subtitle">基准期：预测前 3 年 · 温度阈值 ±2℃ · 极端降水 P95</div>
             </div>
           </div>
-          <div class="risk-province">
-            <div class="risk-province__note" id="riskProvNote">--</div>
-            <div class="risk-province__grid" id="riskProvGrid"></div>
+          <div class="forecast-panels forecast-panels--3">
+            <div class="panel panel--soft">
+              <div class="panel__title">高温异常风险（+2℃）</div>
+              <div class="forecast-table" id="tempAnomHighTable"></div>
+            </div>
+            <div class="panel panel--soft">
+              <div class="panel__title">低温异常风险（-2℃）</div>
+              <div class="forecast-table" id="tempAnomLowTable"></div>
+            </div>
+            <div class="panel panel--soft">
+              <div class="panel__title">极端降水风险（P95）</div>
+              <div class="forecast-table" id="extremeRainTable"></div>
+            </div>
           </div>
         </article>
 

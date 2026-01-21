@@ -81,6 +81,48 @@
       "建议将采购/仓储/物流资源按风险等级预留弹性，避免在极端天气窗口出现执行瓶颈。"
     ]
   },
+  "weather": {
+    "source": "Mock",
+    "issue_month": "2024-06",
+    "months": ["2024-07", "2024-08", "2024-09"],
+    "temperature": {
+      "unit": "℃",
+      "provinces": [
+        { "name": "山东", "values": [27.4, 26.8, 24.9] },
+        { "name": "河北", "values": [26.5, 26.1, 23.6] },
+        { "name": "辽宁", "values": [23.2, 22.6, 20.4] }
+      ]
+    },
+    "precipitation": {
+      "unit": "mm",
+      "provinces": [
+        { "name": "山东", "values": [162, 148, 135] },
+        { "name": "河北", "values": [138, 126, 118] },
+        { "name": "辽宁", "values": [122, 110, 96] }
+      ]
+    },
+    "temp_anomaly_high": {
+      "provinces": [
+        { "name": "山东", "values": [0.28, 0.24, 0.18] },
+        { "name": "河北", "values": [0.22, 0.21, 0.16] },
+        { "name": "辽宁", "values": [0.14, 0.16, 0.12] }
+      ]
+    },
+    "temp_anomaly_low": {
+      "provinces": [
+        { "name": "山东", "values": [0.12, 0.15, 0.2] },
+        { "name": "河北", "values": [0.18, 0.2, 0.24] },
+        { "name": "辽宁", "values": [0.22, 0.25, 0.28] }
+      ]
+    },
+    "extreme_precip": {
+      "provinces": [
+        { "name": "山东", "values": [0.21, 0.26, 0.19] },
+        { "name": "河北", "values": [0.24, 0.28, 0.22] },
+        { "name": "辽宁", "values": [0.17, 0.2, 0.16] }
+      ]
+    }
+  },
   "regions": {
     "SD": {
       "name": "山东",

@@ -68,37 +68,97 @@ function chipClass(sev) {
   return sev === "high" ? "chip--high" : sev === "mid" ? "chip--mid" : "chip--low";
 }
 
-function renderProvinceRisk(el, rows) {
+function monthLabel(ym) {
+  if (!ym) return "--";
+  const parts = String(ym).split("-");
+  if (parts.length < 2) return ym;
+  return `${Number(parts[1])}月`;
+}
+
+function normalizeForecastRows(rows) {
+  if (!rows) return [];
+  return rows.map((r) => ({
+    name: r.province_short || r.province || r.name || "未知",
+    values: r.values || r.probs || r.risks || []
+  }));
+}
+
+function buildLeadRows(leads, valueKey = "mean_prob") {
+  const map = new Map();
+  const order = ["山东", "河北", "辽宁"];
+  const leadKeys = [1, 2, 3];
+  for (let i = 0; i < leadKeys.length; i += 1) {
+    const lead = leadKeys[i];
+    const rows = leads?.[lead] || leads?.[String(lead)] || [];
+    for (const r of rows) {
+      const name = r.province_short || r.province || r.name || "未知";
+      if (!map.has(name)) map.set(name, { name, values: [null, null, null] });
+      map.get(name).values[i] = r[valueKey];
+    }
+  }
+  const ordered = [];
+  for (const key of order) {
+    if (map.has(key)) ordered.push(map.get(key));
+  }
+  for (const row of map.values()) {
+    if (!order.includes(row.name)) ordered.push(row);
+  }
+  return ordered;
+}
+
+function renderForecastTable(el, rows, months, options) {
+  if (!el) return;
   el.innerHTML = "";
-  if (!rows?.length) {
+  const safeRows = normalizeForecastRows(rows);
+  if (!safeRows.length) {
     const empty = document.createElement("div");
     empty.className = "hint";
-    empty.textContent = "暂无省级风险数据。";
+    empty.textContent = "暂无数据。";
     el.appendChild(empty);
     return;
   }
+  const labels = (months || []).length ? months.map(monthLabel) : ["M+1", "M+2", "M+3"];
 
-  const sorted = [...rows].sort((a, b) => b.mean_prob - a.mean_prob);
-  for (let i = 0; i < sorted.length; i += 1) {
-    const r = sorted[i];
-    const sev = i === 0 ? "high" : i === 1 ? "mid" : "low";
-    const item = document.createElement("div");
-    item.className = `risk-province__item risk-province__item--${sev}`;
-    const meanPct = fmtPct(r.mean_prob);
-    const maxPct = fmtPct(r.max_prob);
-    const highPct = fmtPct(r.high_share);
-    const coveragePct = fmtPct(r.coverage);
-    const bar = Math.round(clamp01(r.mean_prob) * 100);
-    item.innerHTML = `
-      <div class="risk-province__item-top">
-        <div class="risk-province__item-name">${r.province_short || r.province}</div>
-        <div class="risk-province__item-meta">均值 ${meanPct}</div>
-      </div>
-      <div class="risk-province__bar"><div class="risk-province__bar-fill" style="width:${bar}%"></div></div>
-      <div class="risk-province__item-meta">最高县 ${maxPct} · 高风险县占比 ${highPct}</div>
-      <div class="risk-province__item-meta">覆盖 ${coveragePct} · 样本 ${r.count}/${r.total_count}</div>
-    `;
-    el.appendChild(item);
+  const header = document.createElement("div");
+  header.className = "forecast-row forecast-row--head";
+  header.innerHTML = `
+    <div class="forecast-cell forecast-cell--label">产区</div>
+    <div class="forecast-cell">${labels[0] || "--"}</div>
+    <div class="forecast-cell">${labels[1] || "--"}</div>
+    <div class="forecast-cell">${labels[2] || "--"}</div>
+  `;
+  el.appendChild(header);
+
+  const unit = options?.unit || "";
+  const type = options?.type || "value";
+  const decimals = Number.isFinite(options?.decimals) ? options.decimals : type === "value" ? 1 : 0;
+
+  for (const row of safeRows) {
+    const line = document.createElement("div");
+    line.className = "forecast-row";
+    const label = document.createElement("div");
+    label.className = "forecast-cell forecast-cell--label";
+    label.textContent = row.name;
+    line.appendChild(label);
+
+    for (let i = 0; i < 3; i += 1) {
+      const value = row.values?.[i];
+      const cell = document.createElement("div");
+      cell.className = "forecast-cell";
+      if (type === "risk") {
+        const sev = severityFromProb(value ?? 0);
+        cell.classList.add(`forecast-cell--${sev}`);
+        cell.innerHTML = `<div class="forecast-value">${fmtPct(value)}</div>`;
+      } else {
+        const text =
+          Number.isFinite(value) && value !== null
+            ? `${value.toFixed(decimals)}${unit}`
+            : "--";
+        cell.innerHTML = `<div class="forecast-value">${text}</div>`;
+      }
+      line.appendChild(cell);
+    }
+    el.appendChild(line);
   }
 }
 
@@ -361,55 +421,6 @@ function drawRainChart(canvas, series) {
   }
 }
 
-function buildMatrix(el, hazards) {
-  el.innerHTML = "";
-  const header = document.createElement("div");
-  header.className = "matrix__row";
-  header.innerHTML = `
-    <div class="matrix__label" role="columnheader">触发器</div>
-    <div class="matrix__label" role="columnheader">未来 7 天</div>
-    <div class="matrix__label" role="columnheader">未来 15 天</div>
-    <div class="matrix__label" role="columnheader">未来 30 天</div>
-  `;
-  el.appendChild(header);
-
-  for (const hz of hazards) {
-    const row = document.createElement("div");
-    row.className = "matrix__row";
-    row.setAttribute("role", "row");
-
-    const label = document.createElement("div");
-    label.className = "matrix__label";
-    label.textContent = hz.type;
-    row.appendChild(label);
-
-    const cells = [
-      { key: "h7", title: "未来 7 天" },
-      { key: "h15", title: "未来 15 天" },
-      { key: "h30", title: "未来 30 天" }
-    ];
-    for (const c of cells) {
-      const v = hz[c.key];
-      const cell = document.createElement("div");
-      cell.className = `cell cell--${v.s}`;
-      cell.setAttribute("role", "cell");
-      cell.innerHTML = `
-        <div class="cell__top">
-          <div class="cell__haz">${titleShort(c.title)}</div>
-          <div class="cell__prob">${Math.round(v.p * 100)}%</div>
-        </div>
-        <div class="cell__meta">严重度：${severityLabel(v.s)}</div>
-      `;
-      row.appendChild(cell);
-    }
-    el.appendChild(row);
-  }
-}
-
-function titleShort(s) {
-  return s.replace("未来 ", "").replace(" 天", "D");
-}
-
 function renderAlerts(el, alerts, threshold) {
   el.innerHTML = "";
   const list = alerts
@@ -592,20 +603,81 @@ function leadLabel(lead) {
   return "到采收";
 }
 
-const RISK_PROV_FILES = {
-  "2024-07": "./data/extreme_risk_province_2024-07.json"
+const WEATHER_FILES = {
+  tempAnomaly: "./data/temp_anomaly_province_2024-07.json",
+  extremeRain: "./data/extreme_risk_province_2024-07.json"
 };
-const riskProvinceCache = new Map();
+const weatherCache = new Map();
 
-async function loadRiskProvince(month) {
-  const url = RISK_PROV_FILES[month];
-  if (!url) throw new Error("暂无该月的数据文件");
-  if (riskProvinceCache.has(url)) return riskProvinceCache.get(url);
+function addMonths(ym, delta) {
+  const [y, m] = ym.split("-").map((n) => Number(n));
+  if (!y || !m) return ym;
+  const total = y * 12 + (m - 1) + delta;
+  const ny = Math.floor(total / 12);
+  const nm = (total % 12) + 1;
+  return `${ny}-${String(nm).padStart(2, "0")}`;
+}
+
+async function loadWeatherFile(key) {
+  const url = WEATHER_FILES[key];
+  if (!url) return null;
+  if (weatherCache.has(url)) return weatherCache.get(url);
   const res = await fetch(url);
-  if (!res.ok) throw new Error(`省级风险加载失败：${res.status}`);
+  if (!res.ok) throw new Error(`天气数据加载失败：${res.status}`);
   const data = await res.json();
-  riskProvinceCache.set(url, data);
+  weatherCache.set(url, data);
   return data;
+}
+
+async function hydrateWeatherFromFiles(weather) {
+  if (!weather) return;
+  let touched = false;
+  try {
+    const temp = await loadWeatherFile("tempAnomaly");
+    if (temp) {
+      const warmLeads = temp.warm?.leads || temp.leads;
+      const coldLeads = temp.cold?.leads || temp.leads;
+      if (!weather.months && temp.target_month) {
+        weather.months = [
+          temp.target_month,
+          addMonths(temp.target_month, 1),
+          addMonths(temp.target_month, 2)
+        ];
+      }
+      weather.temp_anomaly_high = weather.temp_anomaly_high || {};
+      weather.temp_anomaly_low = weather.temp_anomaly_low || {};
+      weather.temp_anomaly_high.rows = buildLeadRows(warmLeads || {}, "mean_prob");
+      weather.temp_anomaly_low.rows = buildLeadRows(coldLeads || {}, "mean_prob");
+      weather.temp_anomaly_high.source = "模型输出";
+      weather.temp_anomaly_low.source = "模型输出";
+      touched = true;
+    }
+  } catch (err) {
+    console.warn(err);
+  }
+
+  try {
+    const extreme = await loadWeatherFile("extremeRain");
+    if (extreme) {
+      if (!weather.months && extreme.target_month) {
+        weather.months = [
+          extreme.target_month,
+          addMonths(extreme.target_month, 1),
+          addMonths(extreme.target_month, 2)
+        ];
+      }
+      weather.extreme_precip = weather.extreme_precip || {};
+      weather.extreme_precip.rows = buildLeadRows(extreme.leads || {}, "mean_prob");
+      weather.extreme_precip.source = "模型输出";
+      touched = true;
+    }
+  } catch (err) {
+    console.warn(err);
+  }
+
+  if (touched) {
+    weather.source = weather.source ? "Mock + 模型" : "模型输出";
+  }
 }
 
 function setStatus(data) {
@@ -676,6 +748,60 @@ function setKPIs(data, threshold) {
   $("#kpiNote").textContent = "提示：建议用区间与概率沟通不确定性（而非单点数值）。";
 }
 
+function renderWeatherPanels(view) {
+  const weather = view.weather;
+  const status = $("#weatherStatus");
+  const subtitle = $("#weatherSubtitle");
+
+  if (!weather) {
+    if (status) status.textContent = "暂无数据";
+    return;
+  }
+
+  const months = weather.months || [];
+  const issue = weather.issue_month || "--";
+  const labels = months.length ? months.map(monthLabel).join(" / ") : "M+1 / M+2 / M+3";
+  if (subtitle) subtitle.textContent = `预测时刻 ${issue} · 目标月 ${labels}`;
+  if (status) status.textContent = `数据：${weather.source || "Mock"}`;
+
+  const temp = weather.temperature || {};
+  const rain = weather.precipitation || {};
+  const hot = weather.temp_anomaly_high || {};
+  const cold = weather.temp_anomaly_low || {};
+  const extreme = weather.extreme_precip || {};
+
+  renderForecastTable(
+    $("#tempForecastTable"),
+    temp.rows || temp.provinces,
+    months,
+    { type: "value", unit: temp.unit || "℃", decimals: 1 }
+  );
+  renderForecastTable(
+    $("#rainForecastTable"),
+    rain.rows || rain.provinces,
+    months,
+    { type: "value", unit: rain.unit || "mm", decimals: 0 }
+  );
+  renderForecastTable(
+    $("#tempAnomHighTable"),
+    hot.rows || hot.provinces,
+    months,
+    { type: "risk" }
+  );
+  renderForecastTable(
+    $("#tempAnomLowTable"),
+    cold.rows || cold.provinces,
+    months,
+    { type: "risk" }
+  );
+  renderForecastTable(
+    $("#extremeRainTable"),
+    extreme.rows || extreme.provinces,
+    months,
+    { type: "risk" }
+  );
+}
+
 function applyRegionFilter(raw, regionCode) {
   if (!regionCode || regionCode === "ALL") return raw;
   const r = raw.regions[regionCode];
@@ -713,6 +839,9 @@ async function main() {
       if (!r.ok) throw new Error(`mock-data.json HTTP ${r.status}`);
       return r.json();
     }));
+  const weather = safeClone(raw.weather || {});
+  await hydrateWeatherFromFiles(weather);
+  raw.weather = weather;
 
   const state = {
     showFan: true,
@@ -731,36 +860,6 @@ async function main() {
   const regionEl = $("#selRegion");
   const rng = $("#rngRisk");
   const txtRisk = $("#txtRisk");
-  const riskMonthEl = $("#selExtremeMonth");
-  const riskLeadEl = $("#selExtremeLead");
-
-  async function renderProvinceRisk() {
-    const month = riskMonthEl?.value;
-    const lead = String(Number(riskLeadEl?.value || 2));
-    const status = $("#riskMapStatus");
-    const grid = $("#riskProvGrid");
-    const note = $("#riskProvNote");
-
-    if (!grid || !month || !lead) return;
-
-    try {
-      if (status) status.textContent = "加载中";
-      const data = await loadRiskProvince(month);
-      const rows = data.leads?.[lead] || [];
-      renderProvinceRisk(grid, rows);
-      if (note) {
-        const total = rows.reduce((acc, r) => acc + (r.total_count || 0), 0);
-        const count = rows.reduce((acc, r) => acc + (r.count || 0), 0);
-        note.textContent = `省级汇总 · 目标月 ${month} · 提前 ${lead} 个月 · 覆盖 ${count}/${total} 县`;
-      }
-      if (status) status.textContent = "已载入";
-    } catch (err) {
-      console.error(err);
-      if (grid) grid.innerHTML = "";
-      if (note) note.textContent = "省级风险加载失败，请检查数据文件或用本地服务器打开页面。";
-      if (status) status.textContent = "加载失败";
-    }
-  }
 
   function render() {
     // Prototype keeps season/lead as UI only; real product would query backend.
@@ -780,8 +879,8 @@ async function main() {
     const fan = $("#fanChart");
     drawFanChart(fan, view.all.trend_weeks, state);
 
-    buildMatrix($("#riskMatrix"), view.all.hazards);
     updateProvinceCards(raw);
+    renderWeatherPanels(view);
     renderAlerts($("#alertList"), view.all.alerts, threshold);
 
     renderAboutDialog(view, threshold);
@@ -792,8 +891,6 @@ async function main() {
 
   [seasonEl, leadEl, regionEl].forEach((el) => el.addEventListener("change", render));
   rng.addEventListener("input", render);
-  if (riskMonthEl) riskMonthEl.addEventListener("change", renderProvinceRisk);
-  if (riskLeadEl) riskLeadEl.addEventListener("change", renderProvinceRisk);
 
   $("#btnAbout").addEventListener("click", () => openDialog(dlgAbout));
   $("#btnExport").addEventListener("click", () => {
@@ -813,7 +910,6 @@ async function main() {
   });
 
   render();
-  await renderProvinceRisk();
 }
 
 main().catch((e) => {

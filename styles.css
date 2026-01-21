@@ -386,7 +386,13 @@ canvas {
   align-items: center;
   gap: 8px;
 }
-.risk-province__item-name { font-weight: 650; }
+.risk-province__item-name {
+  font-weight: 650;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 .risk-province__item-meta { color: var(--muted); font-size: 12px; }
 .risk-province__bar {
   height: 6px;
@@ -664,7 +670,13 @@ canvas {
   border: 1px solid var(--line);
   background: rgba(4, 10, 18, 0.85);
 }
-.row__name { font-weight: 650; }
+.row__name {
+  font-weight: 650;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 .row__meta { color: var(--muted); font-variant-numeric: tabular-nums; }
 
 .footnote { margin-top: 12px; color: var(--muted2); font-size: 12.5px; }

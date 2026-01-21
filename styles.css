@@ -152,6 +152,7 @@ body {
 .dot--low { background: rgba(74,222,128,0.9); }
 .dot--mid { background: rgba(251,191,36,0.95); }
 .dot--high { background: rgba(251,113,133,0.95); }
+.dot--danger { background: rgba(255,79,110,0.98); }
 
 .grid {
   margin-top: 14px;
@@ -308,6 +309,75 @@ canvas {
 .cell--low { background: rgba(74,222,128,0.06); border-color: rgba(74,222,128,0.16); }
 .cell--mid { background: rgba(251,191,36,0.06); border-color: rgba(251,191,36,0.18); }
 .cell--high { background: rgba(251,113,133,0.06); border-color: rgba(251,113,133,0.18); }
+
+.field--compact .field__control { min-width: 140px; }
+
+.risk-map {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 0.8fr);
+  gap: 16px;
+  align-items: stretch;
+}
+.risk-map__controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.risk-map__canvas { position: relative; }
+.risk-map__legend {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  display: inline-flex;
+  gap: 12px;
+  align-items: center;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: rgba(3, 8, 14, 0.82);
+  font-size: 12px;
+  color: var(--muted);
+}
+.risk-map__side { display: grid; gap: 12px; }
+.risk-map__note {
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: var(--bg2);
+  color: var(--muted);
+  font-size: 12.5px;
+}
+.risk-map__list { display: grid; gap: 10px; }
+.risk-map__item {
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: var(--bg2);
+  display: grid;
+  gap: 6px;
+}
+.risk-map__item-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+.risk-map__item-name { font-weight: 650; }
+.risk-map__item-meta { color: var(--muted); font-size: 12px; }
+.risk-map__bar {
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(4, 10, 18, 0.9);
+  border: 1px solid var(--line);
+  overflow: hidden;
+}
+.risk-map__bar-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(38,216,255,0.9), rgba(255,93,122,0.8));
+}
 
 .provinces {
   margin-top: 12px;
@@ -561,6 +631,7 @@ canvas {
   .filters { grid-template-columns: 1fr 1fr; }
   .card--kpi { grid-column: span 6; }
   .matrix__row { grid-template-columns: 1fr; }
+  .risk-map { grid-template-columns: 1fr; }
   .provinces { grid-template-columns: 1fr; }
   .alert { grid-template-columns: 1fr; }
   .grid2 { grid-template-columns: 1fr; }

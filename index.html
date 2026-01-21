@@ -215,6 +215,47 @@
           <div class="matrix" id="riskMatrix" role="table" aria-label="风险矩阵表格"></div>
         </article>
 
+        <article class="card card--wide" aria-label="极端降水风险地图">
+          <div class="card__head">
+            <div>
+              <div class="card__title">极端降水风险地图（县级）</div>
+              <div class="card__subtitle">P95 极端降水概率 · ENSO/PDO/IOD 修正</div>
+            </div>
+            <div class="risk-map__controls">
+              <div class="field field--compact">
+                <label class="field__label" for="selExtremeMonth">目标月</label>
+                <select id="selExtremeMonth" class="field__control">
+                  <option value="2024-07" selected>2024-07</option>
+                </select>
+              </div>
+              <div class="field field--compact">
+                <label class="field__label" for="selExtremeLead">提前量</label>
+                <select id="selExtremeLead" class="field__control">
+                  <option value="1">提前 1 月</option>
+                  <option value="2" selected>提前 2 月</option>
+                  <option value="3">提前 3 月</option>
+                </select>
+              </div>
+              <div class="pill pill--ghost" id="riskMapStatus">加载中</div>
+            </div>
+          </div>
+          <div class="risk-map">
+            <div class="risk-map__canvas">
+              <canvas id="riskMapCanvas" width="980" height="380"></canvas>
+              <div class="risk-map__legend">
+                <span class="legend__item"><span class="dot dot--low"></span>低</span>
+                <span class="legend__item"><span class="dot dot--mid"></span>中</span>
+                <span class="legend__item"><span class="dot dot--high"></span>高</span>
+                <span class="legend__item"><span class="dot dot--danger"></span>极高</span>
+              </div>
+            </div>
+            <div class="risk-map__side">
+              <div class="risk-map__note" id="riskMapNote">--</div>
+              <div class="risk-map__list" id="riskMapList"></div>
+            </div>
+          </div>
+        </article>
+
         <article class="card card--wide" aria-label="产区概览">
           <div class="card__head">
             <div>

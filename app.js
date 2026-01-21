@@ -68,6 +68,118 @@ function chipClass(sev) {
   return sev === "high" ? "chip--high" : sev === "mid" ? "chip--mid" : "chip--low";
 }
 
+function riskColor(level) {
+  if (level === "very_high") return "rgba(255,79,110,0.55)";
+  if (level === "high") return "rgba(251,113,133,0.42)";
+  if (level === "moderate") return "rgba(251,191,36,0.38)";
+  return "rgba(74,222,128,0.32)";
+}
+
+function getCountyName(props) {
+  return props?.县级 || props?.地名 || props?.NAME_3 || props?.ENG_NAME || "未知";
+}
+
+function iterRings(geometry) {
+  if (!geometry) return [];
+  if (geometry.type === "Polygon") return geometry.coordinates || [];
+  if (geometry.type === "MultiPolygon") return (geometry.coordinates || []).flat();
+  return [];
+}
+
+function drawRiskMap(canvas, features) {
+  const { ctx, w, h } = prepareCanvas(canvas, 380);
+  ctx.clearRect(0, 0, w, h);
+
+  if (!features.length) {
+    ctx.fillStyle = "rgba(185,230,255,0.6)";
+    ctx.font = "13px ui-sans-serif, system-ui";
+    ctx.textAlign = "center";
+    ctx.fillText("暂无风险地图数据", w / 2, h / 2);
+    return;
+  }
+
+  let minLon = Infinity, maxLon = -Infinity, minLat = Infinity, maxLat = -Infinity;
+  for (const f of features) {
+    for (const ring of iterRings(f.geometry)) {
+      for (const point of ring) {
+        const lon = point[0];
+        const lat = point[1];
+        if (lon < minLon) minLon = lon;
+        if (lon > maxLon) maxLon = lon;
+        if (lat < minLat) minLat = lat;
+        if (lat > maxLat) maxLat = lat;
+      }
+    }
+  }
+
+  const pad = 16;
+  const spanLon = Math.max(1e-6, maxLon - minLon);
+  const spanLat = Math.max(1e-6, maxLat - minLat);
+  const scale = Math.min((w - pad * 2) / spanLon, (h - pad * 2) / spanLat);
+
+  function x(lon) {
+    return pad + (lon - minLon) * scale;
+  }
+  function y(lat) {
+    return pad + (maxLat - lat) * scale;
+  }
+
+  ctx.lineWidth = 0.6;
+  ctx.strokeStyle = "rgba(15, 23, 42, 0.55)";
+
+  for (const f of features) {
+    const rings = iterRings(f.geometry);
+    if (!rings.length) continue;
+    ctx.beginPath();
+    for (const ring of rings) {
+      if (!ring.length) continue;
+      ctx.moveTo(x(ring[0][0]), y(ring[0][1]));
+      for (let i = 1; i < ring.length; i++) {
+        ctx.lineTo(x(ring[i][0]), y(ring[i][1]));
+      }
+      ctx.closePath();
+    }
+    ctx.fillStyle = riskColor(f.properties?.risk_level);
+    ctx.fill("evenodd");
+    ctx.stroke();
+  }
+}
+
+function renderRiskList(el, features) {
+  el.innerHTML = "";
+  const sorted = [...features]
+    .filter((f) => Number.isFinite(f.properties?.risk_prob))
+    .sort((a, b) => b.properties.risk_prob - a.properties.risk_prob)
+    .slice(0, 8);
+
+  if (!sorted.length) {
+    const empty = document.createElement("div");
+    empty.className = "hint";
+    empty.textContent = "暂无高风险县数据。";
+    el.appendChild(empty);
+    return;
+  }
+
+  for (const f of sorted) {
+    const name = getCountyName(f.properties);
+    const prob = f.properties?.risk_prob ?? 0;
+    const level = f.properties?.risk_level || "low";
+    const levelLabel =
+      level === "very_high" ? "极高" : level === "high" ? "高" : level === "moderate" ? "中" : "低";
+    const item = document.createElement("div");
+    item.className = "risk-map__item";
+    item.innerHTML = `
+      <div class="risk-map__item-top">
+        <div class="risk-map__item-name">${name}</div>
+        <div class="risk-map__item-meta">${Math.round(prob * 100)}%</div>
+      </div>
+      <div class="risk-map__bar"><div class="risk-map__bar-fill" style="width:${Math.round(prob * 100)}%"></div></div>
+      <div class="risk-map__item-meta">等级：${levelLabel}</div>
+    `;
+    el.appendChild(item);
+  }
+}
+
 function drawRiskGauge(canvas, p) {
   const { ctx, w, h } = prepareCanvas(canvas, 110);
   ctx.clearRect(0, 0, w, h);
@@ -558,6 +670,38 @@ function leadLabel(lead) {
   return "到采收";
 }
 
+const RISK_MAP_FILES = {
+  "2024-07": {
+    1: "./data/extreme_risk_map_2024-07_lead1.geojson",
+    2: "./data/extreme_risk_map_2024-07_lead2.geojson",
+    3: "./data/extreme_risk_map_2024-07_lead3.geojson"
+  }
+};
+const RISK_MAP_PREFIXES = ["13", "21", "37"];
+const RISK_MAP_PROVINCES = new Set(["山东省", "河北省", "辽宁省"]);
+const riskMapCache = new Map();
+
+function filterRiskFeatures(features) {
+  return features.filter((f) => {
+    const props = f.properties || {};
+    const code = String(props.__county_code || props.county || "");
+    const inPrefix = RISK_MAP_PREFIXES.some((p) => code.startsWith(p));
+    const inProvince = props.省级 && RISK_MAP_PROVINCES.has(props.省级);
+    return inPrefix || inProvince;
+  });
+}
+
+async function loadRiskGeoJSON(month, lead) {
+  const url = RISK_MAP_FILES[month]?.[lead];
+  if (!url) throw new Error("暂无该月/提前量的数据文件");
+  if (riskMapCache.has(url)) return riskMapCache.get(url);
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`风险地图加载失败：${res.status}`);
+  const data = await res.json();
+  riskMapCache.set(url, data);
+  return data;
+}
+
 function setStatus(data) {
   $("#txtStatus").textContent = `数据：Mock（离线） · 更新时间：${data.generated_at}`;
 }
@@ -681,6 +825,37 @@ async function main() {
   const regionEl = $("#selRegion");
   const rng = $("#rngRisk");
   const txtRisk = $("#txtRisk");
+  const riskMonthEl = $("#selExtremeMonth");
+  const riskLeadEl = $("#selExtremeLead");
+
+  async function renderRiskMap() {
+    const month = riskMonthEl?.value;
+    const lead = Number(riskLeadEl?.value || 2);
+    const status = $("#riskMapStatus");
+    const canvas = $("#riskMapCanvas");
+    const list = $("#riskMapList");
+    const note = $("#riskMapNote");
+
+    if (!canvas || !month || !lead) return;
+
+    try {
+      if (status) status.textContent = "加载中";
+      const geojson = await loadRiskGeoJSON(month, lead);
+      const features = filterRiskFeatures(geojson.features || []);
+      drawRiskMap(canvas, features);
+      renderRiskList(list, features);
+      if (note) {
+        note.textContent = `县级风险地图 · 目标月 ${month} · 提前 ${lead} 个月 · 样本 ${features.length} 个`;
+      }
+      if (status) status.textContent = "已载入";
+    } catch (err) {
+      console.error(err);
+      drawRiskMap(canvas, []);
+      if (list) list.innerHTML = "";
+      if (note) note.textContent = "风险地图加载失败，请检查数据文件或用本地服务器打开页面。";
+      if (status) status.textContent = "加载失败";
+    }
+  }
 
   function render() {
     // Prototype keeps season/lead as UI only; real product would query backend.
@@ -712,6 +887,8 @@ async function main() {
 
   [seasonEl, leadEl, regionEl].forEach((el) => el.addEventListener("change", render));
   rng.addEventListener("input", render);
+  if (riskMonthEl) riskMonthEl.addEventListener("change", renderRiskMap);
+  if (riskLeadEl) riskLeadEl.addEventListener("change", renderRiskMap);
 
   $("#btnAbout").addEventListener("click", () => openDialog(dlgAbout));
   $("#btnExport").addEventListener("click", () => {
@@ -731,6 +908,7 @@ async function main() {
   });
 
   render();
+  await renderRiskMap();
 }
 
 main().catch((e) => {

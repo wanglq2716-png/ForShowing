@@ -445,8 +445,10 @@ canvas {
   background: rgba(4, 10, 18, 0.85);
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   gap: 8px;
+  min-width: 0;
+  overflow: hidden;
   font-variant-numeric: tabular-nums;
 }
 .forecast-cell--label {
@@ -455,11 +457,19 @@ canvas {
   padding-left: 0;
   color: var(--muted);
   font-weight: 600;
+  justify-content: flex-start;
+  min-width: 0;
 }
 .forecast-cell--low { border-color: rgba(74,222,128,0.3); }
 .forecast-cell--mid { border-color: rgba(251,191,36,0.35); }
 .forecast-cell--high { border-color: rgba(251,113,133,0.4); }
-.forecast-value { font-weight: 650; }
+.forecast-value {
+  font-weight: 650;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 .forecast-sub { color: var(--muted); font-size: 12px; }
 
 .provinces {

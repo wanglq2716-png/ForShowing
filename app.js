@@ -774,13 +774,13 @@ function renderWeatherPanels(view) {
     $("#tempForecastTable"),
     temp.rows || temp.provinces,
     months,
-    { type: "value", unit: temp.unit || "℃", decimals: 1 }
+    { type: "value", unit: "", decimals: 1 }
   );
   renderForecastTable(
     $("#rainForecastTable"),
     rain.rows || rain.provinces,
     months,
-    { type: "value", unit: rain.unit || "mm", decimals: 0 }
+    { type: "value", unit: "", decimals: 0 }
   );
   renderForecastTable(
     $("#tempAnomHighTable"),
